@@ -1,110 +1,1130 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="google-site-verification" content="PkLa_ViOo6FAHpvh8SacceMb95o9tePRdrqLNBz9X1M" />
+<meta name="robots" content="index, follow">
 
-    <!-- 🔐 Google Site Verification -->
-    <meta name="google-site-verification" content="PkLa_ViOo6FAHpvh8SacceMb95o9tePRdrqLNBz9X1M" />
+<title>AWS KMS Key Cost Calculator – KMS Pricing &amp; Encryption Cost Estimator</title>
 
-    <!-- SEO Potenciado -->
-    <title>AWS KMS Tools – Encryption Cost Calculator & Key Usage Estimator</title>
+<meta name="description" content="Free AWS KMS cost calculator. Estimate monthly KMS key costs, API request charges, and encryption pricing for symmetric, asymmetric, and HMAC keys. Calculate aws kms key cost by key type, region, and request volume. No login required.">
 
-    <meta name="description" content="Estimate AWS KMS encryption costs and key usage with advanced tools. Optimize encryption strategies and reduce security-related expenses in AWS.">
+<meta name="keywords" content="aws kms key cost, aws kms pricing, kms pricing, aws kms cost, aws key management service pricing, aws kms costs, kms pricing aws, kms cost calculator, aws kms pricing calculator, kms encryption cost">
 
-    <meta name="keywords" content="
-    aws kms cost calculator,
-    kms encryption cost estimator,
-    aws kms pricing calculator,
-    encryption cost aws estimator,
-    kms request cost calculator,
-    aws key management service pricing,
-    kms usage cost estimator,
-    aws encryption pricing tool,
-    kms request pricing calculator,
-    cloud encryption cost estimator,
-    aws security cost calculator,
-    kms billing estimator,
-    optimize kms costs aws
-    ">
+<link rel="canonical" href="https://franrivalbigprojects.github.io/aws-kms-tools/">
 
-    <meta name="author" content="AI Tools Suite">
+<meta property="og:title" content="AWS KMS Key Cost Calculator – KMS Pricing Estimator">
+<meta property="og:description" content="Calculate AWS KMS monthly costs. Enter key types, request volumes, and region to get a full cost breakdown. Free, no login.">
+<meta property="og:type" content="website">
 
-    <!-- Open Graph -->
-    <meta property="og:title" content="AWS KMS Tools – Encryption Cost Optimization">
-    <meta property="og:description" content="Estimate KMS costs and optimize encryption usage.">
-    <meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Estilos -->
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 40px;
-            background: #0f172a;
-            color: #e2e8f0;
-        }
-        h1 {
-            color: #38bdf8;
-        }
-        p {
-            max-width: 750px;
-            line-height: 1.6;
-        }
-        .tools {
-            margin-top: 30px;
-        }
-        .tool {
-            margin-bottom: 20px;
-            padding: 15px;
-            background: #1e293b;
-            border-radius: 10px;
-            transition: 0.2s;
-        }
-        .tool:hover {
-            background: #334155;
-        }
-        a {
-            text-decoration: none;
-            color: #22c55e;
-            font-weight: bold;
-            font-size: 18px;
-        }
-        small {
-            display: block;
-            margin-top: 5px;
-            color: #94a3b8;
-        }
-    </style>
+<style>
+:root {
+  --bg: #04080f;
+  --surface: #070c16;
+  --surface2: #0b1020;
+  --border: #0e1828;
+  --border2: #142236;
+  --kms: #c084fc;
+  --kms-dim: rgba(192,132,252,0.1);
+  --kms-dim2: rgba(192,132,252,0.05);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.1);
+  --green-dim2: rgba(34,197,94,0.05);
+  --orange: #fb923c;
+  --orange-dim: rgba(251,146,60,0.08);
+  --blue: #60a5fa;
+  --blue-dim: rgba(96,165,250,0.08);
+  --yellow: #fbbf24;
+  --yellow-dim: rgba(251,191,36,0.08);
+  --red: #f87171;
+  --red-dim: rgba(248,113,113,0.08);
+  --text: #b8cce0;
+  --text-muted: #3a5268;
+  --text-dim: #0f1e2e;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Inter', sans-serif;
+  --r: 7px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 44px 44px;
+  opacity: 0.45;
+  pointer-events: none;
+  z-index: 0;
+}
+
+header {
+  border-bottom: 1px solid var(--border2);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(4,8,15,0.96);
+  backdrop-filter: blur(12px);
+}
+
+.header-inner {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.logo-pill {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--kms);
+  background: var(--kms-dim2);
+  border: 1px solid rgba(192,132,252,0.3);
+  border-radius: 3px;
+  padding: 3px 9px;
+}
+
+.logo-text {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.logo-text strong { color: var(--kms); font-weight: 500; }
+
+.wrapper {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
+  position: relative;
+  z-index: 1;
+}
+
+/* HERO */
+.hero {
+  padding: 44px 0 32px;
+  border-bottom: 1px solid var(--border2);
+  margin-bottom: 28px;
+}
+
+.hero-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--kms);
+  margin-bottom: 14px;
+  opacity: 0.8;
+}
+
+h1 {
+  font-size: clamp(21px, 3vw, 29px);
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 10px;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+h1 em { font-style: normal; color: var(--kms); }
+
+.hero-sub {
+  font-size: 15px;
+  color: var(--text-muted);
+  max-width: 600px;
+  line-height: 1.75;
+  margin-bottom: 18px;
+}
+
+.hero-sub strong { color: var(--text); }
+
+.pill-row { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.pill {
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 3px 9px;
+  border-radius: 3px;
+  border: 1px solid;
+}
+
+.pill-kms { color: var(--kms); background: var(--kms-dim2); border-color: rgba(192,132,252,0.3); }
+.pill-dim { color: var(--text-muted); border-color: var(--border2); }
+
+/* TOOL */
+.tool-shell {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+
+.tool-topbar {
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border2);
+  padding: 10px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.topbar-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.btn-sm {
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 5px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid;
+  transition: opacity 0.15s;
+}
+
+.btn-sm:hover { opacity: 0.75; }
+.btn-kms   { background: var(--kms-dim2); color: var(--kms); border-color: rgba(192,132,252,0.3); }
+.btn-ghost { background: transparent; color: var(--text-muted); border-color: var(--border2); }
+.btn-green { background: var(--green-dim2); color: var(--green); border-color: rgba(34,197,94,0.25); }
+
+/* KEY ROWS */
+.keys-area {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border2);
+}
+
+.keys-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.keys-head-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+}
+
+.key-row {
+  display: grid;
+  grid-template-columns: 180px 1fr 1fr 1fr 36px;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border2);
+}
+
+.key-row:last-child { border-bottom: none; }
+
+.key-row-head {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border2);
+  margin-bottom: 4px;
+}
+
+.kms-select, .kms-input {
+  background: var(--bg);
+  border: 1px solid var(--border2);
+  border-radius: 4px;
+  padding: 8px 10px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text);
+  width: 100%;
+  -webkit-appearance: none;
+  transition: border-color 0.2s;
+}
+
+.kms-select:focus, .kms-input:focus {
+  outline: none;
+  border-color: rgba(192,132,252,0.3);
+}
+
+.kms-select option { background: #0b1020; }
+
+.key-del {
+  font-size: 16px;
+  color: var(--red);
+  opacity: 0.5;
+  cursor: pointer;
+  text-align: center;
+  transition: opacity 0.15s;
+  font-family: var(--mono);
+}
+
+.key-del:hover { opacity: 1; }
+
+.add-key-btn {
+  margin-top: 12px;
+  padding: 8px 14px;
+  font-family: var(--mono);
+  font-size: 11px;
+  background: var(--kms-dim2);
+  color: var(--kms);
+  border: 1px solid rgba(192,132,252,0.25);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.add-key-btn:hover { opacity: 0.75; }
+
+/* Global settings */
+.global-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border2);
+}
+
+.field { display: flex; flex-direction: column; gap: 5px; }
+
+.field-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.field-hint {
+  font-size: 11px;
+  color: var(--text-dim);
+  font-family: var(--mono);
+  margin-top: -2px;
+}
+
+/* Calculate button */
+.calc-wrap {
+  padding: 14px 20px;
+  background: var(--surface2);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.btn-calc {
+  padding: 10px 28px;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--kms);
+  color: #000;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  transition: opacity 0.15s, box-shadow 0.15s;
+  box-shadow: 0 0 18px rgba(192,132,252,0.22);
+}
+
+.btn-calc:hover { opacity: 0.87; box-shadow: 0 0 28px rgba(192,132,252,0.38); }
+
+/* RESULTS */
+#resultsWrap { display: none; }
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.res-card {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.res-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+}
+
+.rc-kms::before   { background: var(--kms); }
+.rc-blue::before  { background: var(--blue); }
+.rc-green::before { background: var(--green); }
+.rc-orange::before{ background: var(--orange); }
+
+.rc-label { font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); margin-bottom: 8px; }
+.rc-val   { font-family: var(--mono); font-size: 22px; font-weight: 600; line-height: 1; margin-bottom: 3px; }
+.rc-sub   { font-family: var(--mono); font-size: 10px; color: var(--text-muted); }
+
+/* Breakdown */
+.breakdown {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.bt-head {
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border2);
+  padding: 8px 16px;
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.bt-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 16px;
+  border-bottom: 1px solid var(--border2);
+  font-family: var(--mono);
+  font-size: 12px;
+}
+
+.bt-row:last-child { border-bottom: none; }
+.bt-row:hover { background: rgba(192,132,252,0.02); }
+.bt-key { color: var(--text-muted); }
+.bt-val { color: var(--text); }
+.bt-total { color: var(--kms); font-size: 14px; font-weight: 600; }
+
+/* Key breakdown table */
+.key-table {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.kt-row {
+  display: grid;
+  grid-template-columns: 160px 1fr 1fr 1fr 1fr;
+  border-bottom: 1px solid var(--border2);
+}
+
+.kt-row:last-child { border-bottom: none; }
+.kt-row.kt-head { background: var(--surface2); }
+.kt-row.kt-highlight { background: var(--kms-dim2); }
+
+.kt-cell {
+  padding: 9px 12px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  border-right: 1px solid var(--border2);
+  display: flex;
+  align-items: center;
+}
+
+.kt-cell:last-child { border-right: none; }
+.kt-head .kt-cell { color: var(--text-dim); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; }
+
+/* Optimization tip */
+.opt-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-left: 3px solid var(--green);
+  border-radius: var(--r);
+  padding: 14px 18px;
+  margin-bottom: 14px;
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.65;
+}
+
+.opt-card strong { color: var(--green); }
+
+/* DIVIDER */
+hr.divider { border: none; border-top: 1px solid var(--border2); margin: 50px 0; }
+
+.content-section { margin-bottom: 48px; }
+
+.section-eyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--kms);
+  opacity: 0.7;
+  margin-bottom: 8px;
+  display: block;
+}
+
+h3 {
+  font-size: 17px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 14px;
+  letter-spacing: -0.01em;
+}
+
+p {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.8;
+  margin-bottom: 10px;
+}
+
+code {
+  font-family: var(--mono);
+  font-size: 12px;
+  background: var(--surface2);
+  color: var(--kms);
+  padding: 2px 7px;
+  border-radius: 3px;
+  border: 1px solid var(--border2);
+}
+
+.dense-block {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  padding: 22px;
+  margin-top: 14px;
+}
+
+.dense-block p { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--border2); }
+.dense-block p:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+.dense-block strong { color: var(--text); }
+
+.faq-list {
+  margin-top: 14px;
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  overflow: hidden;
+}
+
+.faq-item { border-bottom: 1px solid var(--border2); }
+.faq-item:last-child { border-bottom: none; }
+
+.faq-q {
+  width: 100%;
+  text-align: left;
+  background: var(--surface);
+  border: none;
+  padding: 13px 18px;
+  font-size: 14px;
+  color: var(--text);
+  font-family: var(--sans);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  transition: background 0.15s;
+  font-weight: 500;
+}
+
+.faq-q:hover { background: var(--kms-dim2); }
+.faq-arrow { font-family: var(--mono); font-size: 11px; color: var(--text-dim); transition: transform 0.2s; flex-shrink: 0; }
+.faq-item.open .faq-arrow { transform: rotate(180deg); }
+
+.faq-a {
+  display: none;
+  padding: 0 18px 13px;
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.75;
+  border-top: 1px solid var(--border2);
+  background: var(--bg);
+}
+
+.faq-item.open .faq-a { display: block; }
+
+.other-tools {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.otl {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  padding: 11px 14px;
+  text-decoration: none;
+  display: block;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.otl:hover { border-color: rgba(192,132,252,0.3); background: var(--kms-dim2); }
+.otl-eye  { font-family: var(--mono); font-size: 9px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 4px; }
+.otl-name { font-family: var(--mono); font-size: 12px; color: var(--kms); font-weight: 500; }
+
+footer { border-top: 1px solid var(--border2); padding: 20px 0; position: relative; z-index: 1; }
+
+.footer-inner {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+footer p { font-family: var(--mono); font-size: 11px; color: var(--text-dim); margin: 0; }
+
+@media (max-width: 680px) {
+  .key-row { grid-template-columns: 1fr 1fr; }
+  .global-row { grid-template-columns: 1fr 1fr; }
+  .results-grid { grid-template-columns: 1fr 1fr; }
+  .kt-row { grid-template-columns: 100px repeat(4, 1fr); font-size: 10px; }
+}
+</style>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "AWS KMS Key Cost Calculator",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Web",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "description": "Free AWS KMS key cost calculator. Estimate monthly KMS costs by key type (symmetric, asymmetric, HMAC), API request volume, region, and key rotation. Calculates aws kms key cost, aws kms pricing, and total encryption spend. No login required.",
+  "featureList": "KMS key cost calculation, symmetric asymmetric HMAC pricing, API request cost, key rotation cost, region pricing, optimization recommendations"
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How much does AWS KMS cost per key?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "AWS KMS Customer Managed Keys (CMKs) cost $1.00 per key per month, regardless of key type or usage. AWS Managed Keys (created automatically by AWS services like S3, EBS, RDS) are free — you do not pay the $1/month fee for these keys. API request charges are separate and apply to all key types. Key rotation does not increase the key cost."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is AWS KMS pricing for API requests?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "AWS KMS API request pricing: Symmetric key requests (Encrypt, Decrypt, GenerateDataKey, etc.) cost $0.03 per 10,000 requests. Asymmetric key requests (Sign, Verify, GetPublicKey) cost $0.10 per 10,000 requests. HMAC key requests (GenerateMac, VerifyMac) cost $0.15 per 10,000 requests. The first 20,000 symmetric key requests per month are free. Prices vary slightly by region."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between aws kms key cost for symmetric vs asymmetric keys?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Both symmetric and asymmetric Customer Managed Keys cost $1.00/key/month. The difference is in API request pricing: symmetric operations cost $0.03 per 10,000 requests; asymmetric operations cost $0.10 per 10,000 requests — over 3x more expensive per request. High-volume signing workloads should use symmetric keys where possible. Asymmetric keys are required for digital signatures and public key encryption."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Are AWS Managed Keys free in KMS?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. AWS Managed Keys (keys created and managed by AWS services like aws/s3, aws/ebs, aws/rds) have no $1/month key fee. However, API requests made through AWS services using these keys are still charged at the standard request rates. Customer Managed Keys give you more control (custom rotation, key policies, usage grants) but cost $1/month each."
+      }
+    }
+  ]
+}
+</script>
+
 </head>
+
 <body>
 
-    <h1>AWS KMS Tools</h1>
+<header>
+  <div class="header-inner">
+    <span class="logo-pill">KMS</span>
+    <span class="logo-text"><strong>aws-kms</strong>-key-cost-calculator</span>
+  </div>
+</header>
 
-    <p>
-        Optimize your AWS Key Management Service (KMS) usage with tools designed for security
-        engineers and cloud architects. Estimate encryption costs, analyze key usage, and
-        improve your overall security cost efficiency.
+<div class="wrapper">
+
+  <section class="hero">
+    <p class="hero-tag">// Free AWS Security Tool</p>
+    <h1><em>AWS KMS Key Cost</em> Calculator<br>KMS Pricing &amp; Encryption Estimator</h1>
+    <p class="hero-sub">
+      Calculate <strong>AWS KMS monthly costs</strong> by key type, API request volume, and region. Covers symmetric, asymmetric, and HMAC keys with full cost breakdown and optimization tips.
     </p>
-
-    <p>
-        These tools help you understand KMS pricing, reduce unnecessary encryption operations,
-        and optimize key management strategies across your AWS infrastructure. Ideal for
-        compliance, data protection, and enterprise security environments.
-    </p>
-
-    <div class="tools">
-
-        <div class="tool">
-            <a href="encryption_cost_estimator/">Encryption Cost Estimator</a>
-            <small>Estimate AWS KMS encryption costs based on request volume and usage.</small>
-        </div>
-
-        <div class="tool">
-            <a href="kms_cost_calculator/">KMS Cost Calculator</a>
-            <small>Calculate AWS KMS costs including key usage and API requests.</small>
-        </div>
-
+    <div class="pill-row">
+      <span class="pill pill-kms">Symmetric Keys</span>
+      <span class="pill pill-kms">Asymmetric Keys</span>
+      <span class="pill pill-dim">HMAC Keys</span>
+      <span class="pill pill-dim">API Requests</span>
+      <span class="pill pill-dim">Free &middot; No login</span>
     </div>
+  </section>
+
+  <!-- TOOL -->
+
+  <div class="tool-shell">
+    <div class="tool-topbar">
+      <span class="topbar-label">// AWS KMS Cost Calculator</span>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-sm btn-green" onclick="loadSample()">Load Sample</button>
+        <button class="btn-sm btn-ghost" onclick="resetCalc()">Reset</button>
+      </div>
+    </div>
+
+
+<!-- Global settings -->
+<div class="global-row">
+  <div class="field">
+    <label class="field-label">AWS Region</label>
+    <select class="kms-select" id="regionSelect">
+      <option value="use1">US East (N. Virginia)</option>
+      <option value="usw2">US West (Oregon)</option>
+      <option value="euw1">EU West (Ireland)</option>
+      <option value="apse1">AP Southeast (Singapore)</option>
+      <option value="apne1">AP Northeast (Tokyo)</option>
+    </select>
+  </div>
+  <div class="field">
+    <label class="field-label">Multi-Region Keys</label>
+    <p class="field-hint">Replica key charge per region</p>
+    <input class="kms-input" type="number" id="multiRegionReplicas" placeholder="0" min="0">
+  </div>
+  <div class="field">
+    <label class="field-label">CloudHSM Backing Keys</label>
+    <p class="field-hint">Custom Key Store keys</p>
+    <input class="kms-input" type="number" id="hsmKeys" placeholder="0" min="0">
+  </div>
+</div>
+
+<!-- Key rows -->
+<div class="keys-area">
+  <div class="keys-head">
+    <span class="keys-head-label">Key Configuration</span>
+  </div>
+
+  <!-- Header row -->
+  <div class="key-row key-row-head">
+    <span style="font-family:var(--mono);font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.06em;">Key Type</span>
+    <span style="font-family:var(--mono);font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.06em;">Number of Keys</span>
+    <span style="font-family:var(--mono);font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.06em;">Requests / Month (M)</span>
+    <span style="font-family:var(--mono);font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.06em;">Key Rotation</span>
+    <span></span>
+  </div>
+
+  <div id="keyRowsContainer"></div>
+
+  <button class="add-key-btn" onclick="addKeyRow()">+ Add Key Type</button>
+</div>
+
+<div class="calc-wrap">
+  <button class="btn-calc" onclick="calcKMS()">Calculate KMS Cost</button>
+  <span style="font-family:var(--mono);font-size:11px;color:var(--text-dim);">First 20,000 symmetric requests/month are free</span>
+</div>
+
+
+  </div>
+
+  <!-- RESULTS -->
+
+  <div id="resultsWrap">
+    <div class="results-grid" id="resultsCards"></div>
+    <div class="breakdown" id="breakdownTable"></div>
+    <div class="key-table" id="keyTable"></div>
+    <div class="opt-card" id="optCard" style="display:none;"></div>
+  </div>
+
+  <hr class="divider">
+
+  <section class="content-section">
+    <span class="section-eyebrow">// KMS pricing model</span>
+    <h3>How AWS KMS Key Cost Is Calculated</h3>
+    <p>AWS KMS charges have two components: <strong>key storage</strong> and <strong>API requests</strong>. Each Customer Managed Key (CMK) costs $1.00/month regardless of usage. API requests are charged per 10,000 operations, with the rate depending on key type — symmetric operations are cheapest, asymmetric operations cost over 3x more per request.</p>
+    <p>The first 20,000 symmetric key API requests per month are free. This free tier resets monthly and covers the vast majority of low-volume use cases. For high-throughput encryption workloads (millions of requests/month), the API request cost typically exceeds the key storage cost.</p>
+    <p>Key rotation (automatic annual rotation for symmetric keys) is included in the $1/month key price — there is no additional charge for enabling automatic rotation.</p>
+  </section>
+
+  <hr class="divider">
+
+  <section class="content-section">
+    <span class="section-eyebrow">// Optimization</span>
+    <h3>How to Reduce AWS KMS Costs</h3>
+    <div class="dense-block">
+      <p><strong>Use data key caching to reduce API requests</strong><br>
+      The AWS Encryption SDK supports data key caching — reusing a GenerateDataKey response to encrypt multiple messages before calling KMS again. Instead of one KMS call per object, you can encrypt thousands of objects with a single cached data key. This can reduce KMS API costs by 99% for high-volume encryption workloads like S3 object encryption or DynamoDB item encryption.</p>
+
+
+  <p><strong>Audit and delete unused KMS keys</strong><br>
+  Every CMK costs $1/month regardless of whether it is used. Audit your KMS key list with CloudTrail: if a key shows zero usage in the last 90 days, schedule it for deletion (minimum 7-day waiting period). KMS has a <code>GetKeyRotationStatus</code> and CloudTrail has <code>kms.amazonaws.com</code> events you can query. Unused keys from old projects are a common source of silent KMS spend.</p>
+
+  <p><strong>Use AWS Managed Keys instead of CMKs for non-regulated data</strong><br>
+  If you do not need custom key policies, cross-account access, or manual key rotation control, AWS Managed Keys are free. S3 SSE-S3 and SSE-KMS with AWS managed keys incur no key storage cost. Switch to CMKs only when compliance requirements explicitly require customer-controlled keys or when you need usage audit logging at the key level.</p>
+
+  <p><strong>Prefer symmetric keys over asymmetric keys for bulk encryption</strong><br>
+  Asymmetric key API requests cost $0.10/10K vs $0.03/10K for symmetric — more than 3x more expensive. If your use case is data encryption (not digital signatures or public key operations), symmetric keys are the correct and cheaper choice. Asymmetric keys are required for RSA signing, ECDSA, and scenarios where the public key must be shared externally.</p>
+</div>
+
+  </section>
+
+  <hr class="divider">
+
+  <section class="content-section">
+    <span class="section-eyebrow">// FAQ — aws kms pricing</span>
+    <h3>Frequently Asked Questions — AWS KMS Pricing &amp; Cost</h3>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">How much does AWS KMS cost per key per month?<span class="faq-arrow">&#9660;</span></button>
+        <div class="faq-a">Each Customer Managed Key (CMK) costs $1.00 per month. AWS Managed Keys are free. Multi-Region replica keys also cost $1.00/month each. Keys pending deletion do not incur charges during the waiting period. CloudHSM-backed keys in a Custom Key Store may have additional CloudHSM cluster costs.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">What is AWS KMS pricing for API requests?<span class="faq-arrow">&#9660;</span></button>
+        <div class="faq-a">Symmetric key requests: $0.03 per 10,000 (first 20,000 free/month). Asymmetric key requests: $0.10 per 10,000. HMAC key requests: $0.15 per 10,000. Prices are per the AWS US East region and vary slightly in other regions. Requests include Encrypt, Decrypt, GenerateDataKey, Sign, Verify, GenerateMac, and other cryptographic operations.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">What is aws kms cost for a typical application?<span class="faq-arrow">&#9660;</span></button>
+        <div class="faq-a">A typical application with 5 CMKs and 1 million symmetric requests/month: Keys = 5 × $1 = $5/month. Requests = (1,000,000 - 20,000 free) / 10,000 × $0.03 = $2.94/month. Total = ~$8/month. High-volume applications encrypting 100M objects/month: $5 + (100M / 10K × $0.03) = $5 + $300 = $305/month — data key caching could reduce the $300 request cost to under $1.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Does AWS KMS charge for key rotation?<span class="faq-arrow">&#9660;</span></button>
+        <div class="faq-a">No. Automatic key rotation is included in the $1/month key price — enabling rotation does not add any charge. When a key is rotated, KMS retains all previous key material (for decrypting older data) and the key ID remains the same. The only cost is the $1/month for the key itself, regardless of how many times it has been rotated.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">What is the KMS free tier?<span class="faq-arrow">&#9660;</span></button>
+        <div class="faq-a">AWS KMS offers 20,000 free symmetric key API requests per month. This resets monthly. There is no free tier for key storage ($1/key/month applies from the first key), asymmetric requests, or HMAC requests. The free 20K requests cover most low-volume use cases such as small applications with infrequent encryption operations.</div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <section class="content-section">
+    <span class="section-eyebrow">// More tools</span>
+    <h3>Other Tools</h3>
+    <div class="other-tools">
+      <a href="encryption_cost_estimator/" class="otl">
+        <p class="otl-eye">encrypt //</p>
+        <span class="otl-name">Encryption Cost Estimator</span>
+      </a>
+      <a href="kms_cost_calculator/" class="otl">
+        <p class="otl-eye">cost //</p>
+        <span class="otl-name">KMS Cost Calculator</span>
+      </a>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <p>aws-kms-key-cost-calculator &middot; kms pricing &middot; free &middot; no login</p>
+    <p>symmetric &middot; asymmetric &middot; hmac &middot; api requests &middot; github pages</p>
+  </div>
+</footer>
+
+<script>
+// ─── PRICING DATA ───
+var PRICING = {
+  use1:  { key: 1.00, sym: 0.03,  asym: 0.10,  hmac: 0.15,  hsm: 1.50 },
+  usw2:  { key: 1.00, sym: 0.03,  asym: 0.10,  hmac: 0.15,  hsm: 1.50 },
+  euw1:  { key: 1.00, sym: 0.033, asym: 0.110, hmac: 0.165, hsm: 1.65 },
+  apse1: { key: 1.00, sym: 0.036, asym: 0.12,  hmac: 0.18,  hsm: 1.80 },
+  apne1: { key: 1.00, sym: 0.036, asym: 0.12,  hmac: 0.18,  hsm: 1.80 }
+};
+
+var KEY_TYPES = [
+  { id: 'sym',  label: 'Symmetric (AES-256)', rateKey: 'sym' },
+  { id: 'asym', label: 'Asymmetric (RSA/ECC)', rateKey: 'asym' },
+  { id: 'hmac', label: 'HMAC', rateKey: 'hmac' }
+];
+
+var rowCount = 0;
+var rows = [];
+
+function addKeyRow(type, numKeys, reqM, rotation) {
+  rowCount++;
+  var id = rowCount;
+
+  var container = document.getElementById('keyRowsContainer');
+  var row = document.createElement('div');
+  row.className = 'key-row';
+  row.id = 'krow-' + id;
+
+  // Key type select
+  var sel = document.createElement('select');
+  sel.className = 'kms-select';
+  sel.id = 'ktype-' + id;
+  KEY_TYPES.forEach(function(kt) {
+    var opt = document.createElement('option');
+    opt.value = kt.id;
+    opt.textContent = kt.label;
+    if (type && kt.id === type) opt.selected = true;
+    sel.appendChild(opt);
+  });
+
+  // Number of keys
+  var numInput = document.createElement('input');
+  numInput.type = 'number';
+  numInput.className = 'kms-input';
+  numInput.id = 'knum-' + id;
+  numInput.placeholder = '1';
+  numInput.min = '1';
+  if (numKeys) numInput.value = numKeys;
+
+  // Requests per month (millions)
+  var reqInput = document.createElement('input');
+  reqInput.type = 'number';
+  reqInput.className = 'kms-input';
+  reqInput.id = 'kreq-' + id;
+  reqInput.placeholder = '0.1';
+  reqInput.min = '0';
+  reqInput.step = '0.1';
+  if (reqM !== undefined) reqInput.value = reqM;
+
+  // Rotation toggle
+  var rotSel = document.createElement('select');
+  rotSel.className = 'kms-select';
+  rotSel.id = 'krot-' + id;
+  var optYes = document.createElement('option'); optYes.value = 'yes'; optYes.textContent = 'Yes (included)';
+  var optNo  = document.createElement('option'); optNo.value  = 'no';  optNo.textContent  = 'No';
+  rotSel.appendChild(optYes);
+  rotSel.appendChild(optNo);
+  if (rotation === 'no') optNo.selected = true;
+
+  // Delete button
+  var del = document.createElement('div');
+  del.className = 'key-del';
+  del.textContent = '\u00d7';
+  del.onclick = (function(rowId) {
+    return function() {
+      var el = document.getElementById('krow-' + rowId);
+      if (el) el.remove();
+      rows = rows.filter(function(r) { return r !== rowId; });
+    };
+  })(id);
+
+  row.appendChild(sel);
+  row.appendChild(numInput);
+  row.appendChild(reqInput);
+  row.appendChild(rotSel);
+  row.appendChild(del);
+  container.appendChild(row);
+  rows.push(id);
+}
+
+function fmt(n) { return '$' + n.toFixed(2); }
+
+function calcKMS() {
+  var p = PRICING[document.getElementById('regionSelect').value] || PRICING.use1;
+  var mrReplicas = parseFloat(document.getElementById('multiRegionReplicas').value) || 0;
+  var hsmKeyCount = parseFloat(document.getElementById('hsmKeys').value) || 0;
+
+  var totalKeyCost = 0;
+  var totalReqCost = 0;
+  var keyDetails = [];
+
+  var freeSymRemaining = 20000; // 20K free symmetric requests/month
+
+  rows.forEach(function(id) {
+    var typeEl = document.getElementById('ktype-' + id);
+    var numEl  = document.getElementById('knum-' + id);
+    var reqEl  = document.getElementById('kreq-' + id);
+    if (!typeEl || !numEl) return;
+
+    var keyType = typeEl.value;
+    var numKeys = parseFloat(numEl.value) || 1;
+    var reqM    = parseFloat(reqEl.value) || 0;
+    var totalReqs = reqM * 1000000;
+
+    var keyCost = numKeys * p.key;
+
+    var reqCost = 0;
+    var rate = keyType === 'sym' ? p.sym : keyType === 'asym' ? p.asym : p.hmac;
+
+    if (keyType === 'sym' && freeSymRemaining > 0) {
+      var freeUsed = Math.min(totalReqs, freeSymRemaining);
+      freeSymRemaining -= freeUsed;
+      var billableReqs = totalReqs - freeUsed;
+      reqCost = (billableReqs / 10000) * rate;
+    } else {
+      reqCost = (totalReqs / 10000) * rate;
+    }
+
+    var rowTotal = keyCost + reqCost;
+    totalKeyCost += keyCost;
+    totalReqCost += reqCost;
+
+    var typeLabel = keyType === 'sym' ? 'Symmetric' : keyType === 'asym' ? 'Asymmetric' : 'HMAC';
+    keyDetails.push({
+      type: typeLabel,
+      keys: numKeys,
+      reqs: reqM,
+      keyCost: keyCost,
+      reqCost: reqCost,
+      total: rowTotal,
+      rate: rate
+    });
+  });
+
+  // Multi-region + HSM
+  var mrCost  = mrReplicas * p.key;
+  var hsmCost = hsmKeyCount * p.hsm;
+
+  var totalMonthly = totalKeyCost + totalReqCost + mrCost + hsmCost;
+  var totalAnnual  = totalMonthly * 12;
+
+  // Result cards
+  var cardsEl = document.getElementById('resultsCards');
+  cardsEl.innerHTML = '';
+
+  function makeCard(cls, label, val, sub) {
+    var c = document.createElement('div'); c.className = 'res-card rc-' + cls;
+    var l = document.createElement('div'); l.className = 'rc-label'; l.textContent = label;
+    var v = document.createElement('div'); v.className = 'rc-val';
+    var colors = { kms: 'var(--kms)', blue: 'var(--blue)', green: 'var(--green)', orange: 'var(--orange)' };
+    v.style.color = colors[cls] || 'var(--text)';
+    v.textContent = val;
+    var s = document.createElement('div'); s.className = 'rc-sub'; s.textContent = sub;
+    c.appendChild(l); c.appendChild(v); c.appendChild(s);
+    return c;
+  }
+
+  cardsEl.appendChild(makeCard('kms',    'Monthly Total',   fmt(totalMonthly),  rows.length + ' key group' + (rows.length !== 1 ? 's' : '') + ' configured'));
+  cardsEl.appendChild(makeCard('blue',   'Annual Estimate', fmt(totalAnnual),   'x12 months'));
+  cardsEl.appendChild(makeCard('green',  'Key Storage Cost',fmt(totalKeyCost + mrCost + hsmCost), '$1.00/key/month'));
+  cardsEl.appendChild(makeCard('orange', 'API Request Cost', fmt(totalReqCost), '20K sym requests free/mo'));
+
+  // Breakdown table
+  var bt = document.getElementById('breakdownTable');
+  bt.innerHTML = '';
+  var bHead = document.createElement('div'); bHead.className = 'bt-head'; bHead.textContent = 'Cost Breakdown';
+  bt.appendChild(bHead);
+
+  function bRow(key, val, bold) {
+    var row = document.createElement('div'); row.className = 'bt-row';
+    var k = document.createElement('span'); k.className = 'bt-key'; k.textContent = key;
+    var v = document.createElement('span'); v.className = bold ? 'bt-total' : 'bt-val'; v.textContent = val;
+    row.appendChild(k); row.appendChild(v); bt.appendChild(row);
+  }
+
+  keyDetails.forEach(function(d) {
+    bRow(d.type + ' (' + d.keys + ' key' + (d.keys !== 1 ? 's' : '') + ' × $1.00)', fmt(d.keyCost));
+    if (d.reqs > 0) {
+      bRow('  API requests (' + d.reqs + 'M × $' + d.rate.toFixed(3) + '/10K)', fmt(d.reqCost));
+    }
+  });
+
+  if (mrReplicas > 0) bRow('Multi-Region replicas (' + mrReplicas + ' × $1.00)', fmt(mrCost));
+  if (hsmCost > 0) bRow('CloudHSM-backed keys (' + hsmKeyCount + ' × $' + p.hsm + '/key)', fmt(hsmCost));
+  bRow('Monthly total', fmt(totalMonthly), true);
+  bRow('Annual total', fmt(totalAnnual));
+
+  // Per-key type table
+  var kt = document.getElementById('keyTable');
+  kt.innerHTML = '';
+
+  var hRow = document.createElement('div'); hRow.className = 'kt-row kt-head';
+  ['Key Type', 'Keys', 'Requests/mo', 'Key Cost', 'Request Cost', 'Total'].forEach(function(h) {
+    var c = document.createElement('div'); c.className = 'kt-cell'; c.textContent = h; hRow.appendChild(c);
+  });
+  kt.appendChild(hRow);
+
+  keyDetails.forEach(function(d) {
+    var row = document.createElement('div'); row.className = 'kt-row';
+    [d.type, d.keys, d.reqs + 'M', fmt(d.keyCost), fmt(d.reqCost), fmt(d.total)].forEach(function(v) {
+      var c = document.createElement('div'); c.className = 'kt-cell'; c.textContent = v; row.appendChild(c);
+    });
+    kt.appendChild(row);
+  });
+
+  // Optimization tip
+  var oc = document.getElementById('optCard');
+  var tips = [];
+
+  if (totalReqCost > totalKeyCost * 3) {
+    tips.push('Your API request cost is significantly higher than key storage. Consider implementing data key caching with the AWS Encryption SDK to reduce KMS calls by up to 99%.');
+  }
+
+  var hasAsym = keyDetails.some(function(d) { return d.type === 'Asymmetric' && d.reqs > 0.5; });
+  if (hasAsym) {
+    tips.push('High asymmetric request volume detected. Asymmetric requests cost 3x more than symmetric. If these are bulk encryption operations (not signatures), switch to symmetric keys.');
+  }
+
+  if (tips.length > 0) {
+    oc.style.display = 'block';
+    oc.innerHTML = '<strong>Optimization Opportunities:</strong> ' + tips.join(' ');
+  } else {
+    oc.style.display = 'none';
+  }
+
+  document.getElementById('resultsWrap').style.display = 'block';
+  document.getElementById('resultsWrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function loadSample() {
+  document.getElementById('multiRegionReplicas').value = '2';
+  document.getElementById('hsmKeys').value = '0';
+  // Clear existing rows
+  document.getElementById('keyRowsContainer').innerHTML = '';
+  rows = [];
+  addKeyRow('sym',  '5', '1.0',  'yes');
+  addKeyRow('asym', '2', '0.1',  'yes');
+  addKeyRow('hmac', '1', '0.05', 'no');
+  setTimeout(calcKMS, 50);
+}
+
+function resetCalc() {
+  document.getElementById('keyRowsContainer').innerHTML = '';
+  rows = [];
+  document.getElementById('multiRegionReplicas').value = '';
+  document.getElementById('hsmKeys').value = '';
+  document.getElementById('resultsWrap').style.display = 'none';
+  addKeyRow('sym', '', '', 'yes');
+}
+
+function toggleFaq(btn) {
+  btn.parentElement.classList.toggle('open');
+}
+
+// Init with one empty symmetric key row
+addKeyRow('sym', '', '', 'yes');
+</script>
 
 </body>
 </html>
